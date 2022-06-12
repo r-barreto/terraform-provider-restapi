@@ -14,32 +14,36 @@ Use `chmod +x` to make it executable and then either place it at the root of you
 ```terraform
 provider "restapi" {}
 
+locals {
+     id = 1234
+}
+
 resource "restapi_call" "test" {
-  endpoint  = "http://localhost:8080"
-  
-  create {
-    path      = "/api/objects/{id}"
-    id_path   = "$.response[0].id"
-    json_path = "$.response[0]"
-    body      = jsonencode({
-      "response": [{
-        "id": "1234",
-        "name": "api-test"
-      }]
-    })
-  }
-  
-  read {
-    path = "/api/objects/{id}"
-  }
-  
-  delete {
-    path = "/api/objects/{id}"
-  }
+     endpoint  = "http://localhost:8080"
+
+     create {
+          path      = "/api/objects/${local.id}"
+          id_path   = "$.response[0].id"
+          json_path = "$.response[0]"
+          body      = jsonencode({
+               "response": [{
+                    "id": local.id,
+                    "name": "api-test"
+               }]
+          })
+     }
+
+     read {
+          path = "/api/objects/{id}"
+     }
+
+     delete {
+          path = "/api/objects/{id}"
+     }
 }
 
 output "restapi_output_name" {
-  value = jsondecode(restapi_call.test.create_output).name
+     value = jsondecode(restapi_call.test.create_output).name
 }
 ```
 

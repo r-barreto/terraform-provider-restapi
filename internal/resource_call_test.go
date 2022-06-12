@@ -135,3 +135,54 @@ func TestAccRestApiCreateWithJsonPath(t *testing.T) {
 		},
 	})
 }
+
+func TestAccRestApiDocExample(t *testing.T) {
+	config := `
+		provider "restapi" {}
+
+		locals {
+			id = 1234
+		}
+
+		resource "restapi_call" "test" {
+		  endpoint  = "http://localhost:8080"
+		  
+		  create {
+			path      = "/api/objects/${local.id}"
+			id_path   = "$.response[0].id"
+			json_path = "$.response[0]"
+			body      = jsonencode({
+			  "response": [{
+				"id": local.id,
+				"name": "api-test"
+			  }]
+			})
+		  }
+		  
+		  read {
+			path = "/api/objects/{id}"
+		  }
+		  
+		  delete {
+			path = "/api/objects/{id}"
+		  }
+		}
+		
+		output "restapi_output_name" {
+		  value = jsondecode(restapi_call.test.create_output).name
+		}
+	`
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:          func() { testAccPreCheck(t) },
+		ProviderFactories: testAccProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckOutput("restapi_output_name", "api-test"),
+				),
+			},
+		},
+	})
+}

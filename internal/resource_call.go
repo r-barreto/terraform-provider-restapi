@@ -198,11 +198,12 @@ func runCall(commonResource CommonResource, id string, endpoint string, data *sc
 
 	if commonResource.IdPath != "" {
 		id, err := jsonpath.Get(commonResource.IdPath, responseMap)
-		if err != nil || id.(string) == "" {
+		idString := fmt.Sprintf("%v", id)
+		if err != nil || idString == "" {
 			return diag.FromErr(fmt.Errorf("error querying the id path. ID path: %s, error: %s", commonResource.IdPath, err))
 		}
 
-		data.SetId(id.(string))
+		data.SetId(idString)
 	} else if id != "" {
 		data.SetId(id)
 	} else {
