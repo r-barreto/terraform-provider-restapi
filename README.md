@@ -1,5 +1,6 @@
 # Restapi Terraform Provider
 
+[![user guide](https://img.shields.io/badge/-user%20guide-blue)](https://registry.terraform.io/providers/r-barreto/restapi/latest)
 
 This Terraform provider allows management of a **Rest API** resource.
 
